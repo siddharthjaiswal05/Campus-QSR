@@ -1,0 +1,6 @@
+station,servers,seconds_per_order,effective_cycle_seconds,station_capacity_orders_per_hour,note,is_bottleneck,utilisation_at_line_capacity
+Order capture and payment,2,38.0,19.0,189.5,Unchanged,False,0.342
+Base prep (griddle/fryer),2,46.25,23.12,155.7,Express draws a pre-batched base from the hold cabinet,False,0.417
+Customization station,1,55.5,55.5,64.9,25% of orders bypass the customization dialogue,True,1.0
+Finish and pack,1,45.0,45.0,80.0,Absorbs express assembly and the routing tax,False,0.811
+Handoff and expedite,1,25.0,25.0,144.0,Unchanged,False,0.45

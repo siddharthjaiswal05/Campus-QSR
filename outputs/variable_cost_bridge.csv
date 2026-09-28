@@ -1,0 +1,8 @@
+line,kind,per_order,pct_of_aov,running_contribution,running_margin_pct
+Average order value,revenue,238.85,1.0,238.85,1.0
+Recipe cost at the plate,cost,-87.27,-0.3654,151.58,0.6346
+Packaging,cost,-8.0,-0.0335,143.58,0.6011
+Consumables,cost,-3.0,-0.0126,140.58,0.5886
+Wastage and spoilage,cost,-5.97,-0.025,134.61,0.5636
+Payment processing (MDR),cost,-2.39,-0.01,132.22,0.5536
+Aggregator commission,cost,-5.16,-0.0216,127.06,0.532

@@ -1,0 +1,9 @@
+id,name,in_top_7,price,recipe_cost,contribution_per_unit,gross_margin_pct,unit_mix,express_eligible,customization_seconds,contribution_weight,share_of_menu_contribution,revenue_weight,share_of_menu_revenue
+SKU01,Signature burrito bowl,True,270.0,77.0,193.0,0.7148,0.08,False,96.0,15.44,0.1579,21.6,0.1402
+SKU02,Loaded fries platter,True,180.0,62.0,118.0,0.6556,0.11,True,52.0,12.98,0.1327,19.8,0.1285
+SKU03,Paneer tikka wrap,True,160.0,67.0,93.0,0.5813,0.14,False,78.0,13.020000000000001,0.1331,22.400000000000002,0.1454
+SKU04,Cold coffee (large),True,140.0,42.0,98.0,0.7,0.18,True,40.0,17.64,0.1804,25.2,0.1635
+SKU05,Chicken seekh roll,True,190.0,72.0,118.0,0.6211,0.09,False,84.0,10.62,0.1086,17.099999999999998,0.111
+SKU06,Veg momos (8 pc),True,155.0,60.0,95.0,0.6129,0.1,True,44.0,9.5,0.0971,15.5,0.1006
+SKU07,Masala maggi bowl,True,145.0,50.0,95.0,0.6552,0.08,False,70.0,7.6000000000000005,0.0777,11.6,0.0753
+TAIL,Tail menu (all other SKUs),False,95.0,45.0,50.0,0.5263,0.22,False,48.0,11.0,0.1125,20.9,0.1356

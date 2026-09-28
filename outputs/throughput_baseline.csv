@@ -1,0 +1,6 @@
+station,servers,seconds_per_order,effective_cycle_seconds,station_capacity_orders_per_hour,is_bottleneck,utilisation_at_line_capacity
+Order capture and payment,2,38.0,19.0,189.5,False,0.264
+Base prep (griddle/fryer),2,55.0,27.5,130.9,False,0.382
+Customization station,1,72.0,72.0,50.0,True,1.0
+Finish and pack,1,40.0,40.0,90.0,False,0.556
+Handoff and expedite,1,25.0,25.0,144.0,False,0.347

@@ -1,0 +1,184 @@
+# Campus-QSR: single source of truth for every input the analysis uses.
+# Nothing in the model is hard-coded. Change a number here and every figure in
+# outputs/ moves with it. Units: INR, seconds, orders.
+
+meta:
+  outlet: "Campus quick-service restaurant, single outlet"
+  academic_year: "2025-26"
+  currency: "INR"
+  analysis_owner: "Siddharth Jaiswal"
+
+# ---------------------------------------------------------------------------
+# 1. Operating calendar
+# ---------------------------------------------------------------------------
+# The planning unit is the operating day, and each operating day is assigned a
+# traffic state by the academic calendar rather than by a flat average. States
+# are driven by where the resident population is and what it is doing: exam
+# weeks and fests concentrate students on campus and push them off the mess
+# system; vacations empty the campus.
+calendar:
+  year_start: "2025-07-01"
+  year_end: "2026-06-30"
+  service_hours_per_day: 11        # 11:00 to 22:00
+  # Windows are inclusive on both ends.
+  peak_windows:
+    - {start: "2025-09-15", end: "2025-09-19", label: "Sem 1 mid-term week"}
+    - {start: "2025-10-10", end: "2025-10-18", label: "Annual cultural fest"}
+    - {start: "2025-11-19", end: "2025-11-29", label: "Sem 1 end-term exams"}
+    - {start: "2026-02-11", end: "2026-02-15", label: "Winter fest + placement week"}
+    - {start: "2026-03-11", end: "2026-03-15", label: "Sem 2 mid-term week"}
+    - {start: "2026-04-15", end: "2026-04-23", label: "Sem 2 end-term exams"}
+  lean_windows:
+    - {start: "2025-12-14", end: "2026-01-04", label: "Winter vacation"}
+    - {start: "2026-05-04", end: "2026-06-30", label: "Summer vacation"}
+  # Days the outlet does not trade at all.
+  closures:
+    institute_holidays:
+      - "2025-08-15"   # Independence Day
+      - "2025-10-02"   # Gandhi Jayanti
+      - "2025-10-20"   # Diwali
+      - "2025-10-21"
+      - "2025-10-22"
+      - "2026-01-26"   # Republic Day
+      - "2026-03-04"   # Holi
+      - "2026-03-05"
+    # During vacation the outlet drops to a six-day week.
+    closed_weekdays_in_lean: ["Sunday"]
+    maintenance_shutdown:
+      - {start: "2026-05-25", end: "2026-05-31", label: "Deep clean and equipment service"}
+
+# ---------------------------------------------------------------------------
+# 2. Demand model
+# ---------------------------------------------------------------------------
+# orders(day) = base * state_multiplier * day_of_week_factor
+# `base` is calibrated to the observed regular-session weekday counter.
+demand:
+  base_orders_per_regular_weekday: 101.45
+  state_multipliers:
+    peak: 2.80
+    regular: 1.00
+    lean: 0.72
+  day_of_week_factors:
+    Monday: 0.98
+    Tuesday: 1.00
+    Wednesday: 1.02
+    Thursday: 1.04
+    Friday: 1.12
+    Saturday: 0.92
+    Sunday: 0.80
+  # Share of a day's orders landing in the single busiest hour (lunch rush).
+  peak_hour_share_of_day: 0.22
+
+# ---------------------------------------------------------------------------
+# 3. Per-SKU unit economics
+# ---------------------------------------------------------------------------
+# `variable_cost` is recipe cost at the plate: ingredients at landed rate plus
+# portioned condiments. It excludes packaging and transaction costs, which are
+# order-level and handled in the P&L.
+# `express_eligible` marks SKUs that can be produced to a fixed recipe with no
+# customization decision, which is what makes the Express line possible.
+skus:
+  top_7:
+    - {id: "SKU01", name: "Signature burrito bowl",  price: 270, variable_cost: 77, unit_mix: 0.08, express_eligible: false, customization_seconds: 96}
+    - {id: "SKU02", name: "Loaded fries platter",    price: 180, variable_cost: 62, unit_mix: 0.11, express_eligible: true,  customization_seconds: 52}
+    - {id: "SKU03", name: "Paneer tikka wrap",       price: 160, variable_cost: 67, unit_mix: 0.14, express_eligible: false, customization_seconds: 78}
+    - {id: "SKU04", name: "Cold coffee (large)",     price: 140, variable_cost: 42, unit_mix: 0.18, express_eligible: true,  customization_seconds: 40}
+    - {id: "SKU05", name: "Chicken seekh roll",      price: 190, variable_cost: 72, unit_mix: 0.09, express_eligible: false, customization_seconds: 84}
+    - {id: "SKU06", name: "Veg momos (8 pc)",        price: 155, variable_cost: 60, unit_mix: 0.10, express_eligible: true,  customization_seconds: 44}
+    - {id: "SKU07", name: "Masala maggi bowl",       price: 145, variable_cost: 50, unit_mix: 0.08, express_eligible: false, customization_seconds: 70}
+  # Everything outside the top 7, collapsed into one bucket. Deliberately
+  # thinner margin than the headline SKUs, which is why the blended
+  # contribution margin sits below every individual gross margin.
+  tail:
+    name: "Tail menu (all other SKUs)"
+    price: 95
+    variable_cost: 45
+    unit_mix: 0.22
+    customization_seconds: 48
+
+# ---------------------------------------------------------------------------
+# 4. Order-level variable costs and P&L
+# ---------------------------------------------------------------------------
+basket:
+  units_per_order: 1.55            # attach rate driven
+
+order_variable_costs:
+  packaging_per_order: 8.0
+  consumables_per_order: 3.0       # cutlery, napkins, sachets
+  wastage_pct_of_revenue: 0.025
+  payment_mdr_pct_of_revenue: 0.010
+  aggregator_commission_pct: 0.18
+  aggregator_share_of_orders: 0.12
+
+# Costs that do not move with order count inside the relevant range. The
+# headline break-even is struck against this base.
+fixed_costs_monthly:
+  campus_licence_fee: 85000
+  core_salaries: 78000             # 1 manager + 2 head cooks, on payroll
+  utilities_base: 22000
+  equipment_depreciation: 18000
+  housekeeping_and_security: 12000
+  pos_software_and_internet: 6500
+  repairs_and_maintenance: 8000
+  insurance_and_licences: 5500
+  marketing_base: 7000
+
+# Crew is a step cost, not a fixed cost: it is rostered by month against the
+# traffic state. This is the lever the flexible cost structure pulls.
+staffing:
+  crew_cost_per_head_monthly: 14000
+  crew_heads_session_month: 12
+  crew_heads_lean_month: 8
+  # A month is rostered lean when at least this share of its operating days
+  # are lean-state days.
+  lean_month_threshold: 0.50
+
+# ---------------------------------------------------------------------------
+# 5. Peak-hour throughput
+# ---------------------------------------------------------------------------
+# Serial stations, each with a fixed number of parallel servers. Peak-hour
+# capacity is set by the station with the longest per-order effective cycle.
+# No station gains a head in the Express scenario: work is re-routed, not added.
+throughput:
+  stations:
+    - {name: "Order capture and payment", seconds_per_order: 38, servers: 2}
+    - {name: "Base prep (griddle/fryer)", seconds_per_order: 55, servers: 2}
+    - {name: "Customization station",     seconds_per_order: 72, servers: 1}
+    - {name: "Finish and pack",           seconds_per_order: 40, servers: 1}
+    - {name: "Handoff and expedite",      seconds_per_order: 25, servers: 1}
+  customization_station_name: "Customization station"
+  finish_station_name: "Finish and pack"
+  express:
+    # Share of peak-hour orders routable to the fixed-recipe line. Held to the
+    # three express-eligible SKUs at their observed peak mix, not the full menu.
+    share_of_peak_orders: 0.25
+    # An express order still touches the customization station for lid, garnish
+    # and sauce drizzle. It does not touch the decision dialogue.
+    customization_seconds: 6
+    # Pre-batched base means express orders draw from a hold cabinet.
+    base_prep_seconds: 20
+    # Fixed recipe still has to be finished and packed, plus a small routing tax.
+    finish_penalty_seconds: 20
+
+# ---------------------------------------------------------------------------
+# 6. Off-peak demand stimulation
+# ---------------------------------------------------------------------------
+offpeak:
+  pre_order_pickup:
+    lean_order_uplift_pct: 0.04
+    peak_orders_shifted_out_of_rush_pct: 0.08
+  combo_bundling:
+    # The combo is an attach mechanic, not a basket-wide discount. A discount
+    # spread across the whole basket costs more than the incremental units
+    # return, because the incremental unit carries only average margin. Pricing
+    # one high-margin attach item down is what makes bundling accretive.
+    attach_sku_id: "SKU04"                 # cold coffee, 70 percent gross margin
+    attach_unit_price: 99                  # list 140, combo 99
+    share_of_orders_bundled: 0.17          # lifts units per order 1.55 -> 1.72
+  subscription:
+    price_per_month: 1499
+    meal_credits: 20
+    redemption_rate: 0.68
+    units_per_redeemed_meal: 1.0
+    resident_population: 3500
+    assumed_penetration: 0.08

@@ -1,0 +1,5 @@
+# Analysis stack. Tested on Python 3.12.
+pandas>=2.0
+PyYAML>=6.0
+matplotlib>=3.7      # charts only; run with --no-charts to skip
+tabulate>=0.9        # markdown tables in outputs/summary.md

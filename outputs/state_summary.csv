@@ -1,0 +1,4 @@
+state,operating_days,annual_orders,orders_per_operating_day,share_of_operating_days,share_of_annual_orders,concentration_index
+peak,44,12434,282.6,0.1298,0.3097,2.39
+regular,233,23126,99.3,0.6873,0.5759,0.84
+lean,62,4595,74.1,0.1829,0.1144,0.63
